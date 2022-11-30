@@ -16,6 +16,9 @@ namespace paint
     {
         protected int x;
         protected int y;
+        protected bool draft;
+        public int dx { get; set; }
+        public int dy { get; set; }
         static int Radius;
         static Color color;
         static Shape()
@@ -25,6 +28,7 @@ namespace paint
         }
         public Shape(int x, int y)
         {
+            draft = false;
             this.x = x;
             this.y = y;
         }
@@ -61,6 +65,24 @@ namespace paint
             set
             {
                 y = value;
+            }
+        }
+        public bool d
+        {
+            get
+            {
+                return draft;
+            }
+            set
+            {
+                try
+                {
+                    draft = value;
+                }
+                catch
+                {
+                    Console.WriteLine();
+                }
             }
         }
     }
@@ -110,14 +132,21 @@ namespace paint
         }
         public override bool isInside(int mouse_x, int mouse_y)
         {
-            Point p1 = new Point(xx, yy - GRadius);
-            Point p2 = new Point(xx + (int)(GRadius * Math.Sqrt(3) / 2), yy + GRadius / 2);
-            Point p3 = new Point(xx - (int)(GRadius * Math.Sqrt(3) / 2), yy + GRadius / 2);
-            Point[] points = { p1, p2, p3 };
-            int a = (points[0].X - mouse_x) * (points[1].Y - points[0].Y) - (points[1].X - points[0].X) * (points[0].Y - mouse_y);
-            int b = (points[1].X - mouse_x) * (points[2].Y - points[1].Y) - (points[2].X - points[1].X) * (points[1].Y - mouse_y);
-            int c = (points[2].X - mouse_x) * (points[0].Y - points[2].Y) - (points[0].X - points[2].X) * (points[2].Y - mouse_y);
-            return (a >= 0 && b >= 0 && c >= 0) || (a <= 0 && b <= 0 && c <= 0);
+            double x1, y1, x2, y2, x3, y3;
+            x1 = x - (GRadius / 2 * Math.Sqrt(3));
+            y1 = (y + GRadius / 2.0);
+            x2 = x;
+            y2 = y - GRadius;
+            x3 = x + (GRadius / 2 * Math.Sqrt(3));
+            y3 = y1;
+            if (mouse_y < y + GRadius / 2.0 && mouse_y > (double)(y2 - y1) / (x2 - x1) * mouse_x + (y1 - (double)(y2 - y1) / (x2 - x1) * x1))
+            {
+                if (mouse_y > (double)(y3 - y2) / (x3 - x2) * mouse_x + (y2 - (double)(y3 - y2) / (x3 - x2) * x2))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
 

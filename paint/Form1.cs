@@ -21,6 +21,7 @@ namespace paint
         public Form1()
         {
             InitializeComponent();
+            DoubleBuffered = true;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -58,6 +59,9 @@ namespace paint
                     if (objec.isInside(e.X, e.Y))
                     {
                         fl = true;
+                        objec.d = true;
+                        objec.dx = objec.xx - e.X;
+                        objec.dy = objec.yy - e.Y;
                         break;
                     }
                 }
@@ -120,6 +124,28 @@ namespace paint
                 triangleToolStripMenuItem.Checked = false;
                 circleToolStripMenuItem.Checked = false;
                 squareToolStripMenuItem.Checked = true;
+            }
+        }
+
+        private void Form1_MouseMove(object sender, MouseEventArgs e)
+        {
+            foreach (Shape objec in objects)
+            {
+                if (objec.d)
+                {
+                    objec.xx = e.X + objec.dx;
+                    objec.yy = e.Y + objec.dy;
+                    Refresh();
+                }
+            }
+            
+        }
+
+        private void Form1_MouseUp(object sender, MouseEventArgs e)
+        {
+            foreach (Shape objec in objects)
+            {
+                objec.d = false;
             }
         }
     }
