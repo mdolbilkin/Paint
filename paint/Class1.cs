@@ -17,6 +17,7 @@ namespace paint
         protected int x;
         protected int y;
         protected bool draft;
+        public bool drawline { get; set; }
         public int dx { get; set; }
         public int dy { get; set; }
         static int Radius;

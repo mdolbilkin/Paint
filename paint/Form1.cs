@@ -16,6 +16,7 @@ namespace paint
         //Ellipse c = new Ellipse(100, 100);
         //Shape[] objects = new Shape[5];
         List<Shape> objects = new List<Shape>();
+        List<Point> points = new List<Point>();
         //Square c = new Square(100, 100);
         //Triangle c = new Triangle(100, 100);
         public Form1()
@@ -36,13 +37,83 @@ namespace paint
 
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
+            int levo = 0;
+            int pravo = 0;
             try
             {
-                Brush b = new SolidBrush(Color.Blue);
+                Brush br = new SolidBrush(Color.Blue);
+                Pen pen = new Pen(Color.Black);
                 foreach (Shape objec1 in objects)
                 {
-                    objec1.Draw(e.Graphics, b);
+                    objec1.Draw(e.Graphics, br);
                 }
+                if (objects.Count >= 3)
+                {
+                    int cntL, cntR;
+                    for (int i = 0; i < objects.Count; i++)
+                        objects[i].drawline = false;
+                    for (int i = 0; i < objects.Count; i++)
+                    {
+                        for (int j = i + 1; j < objects.Count; j++)
+                        {
+                            cntL = cntR = 0;
+                            float k = ((float)objects[j].yy - objects[i].yy) / ((float)objects[j].xx - objects[i].xx);
+                            float b = objects[i].yy - k * objects[i].xx;
+                            for (int l = 0; l < objects.Count; l++)
+                            {
+                                if (l != i && l != j)
+                                {
+                                    if (objects[l].yy > k * objects[l].xx + b)
+                                        cntR++;
+                                    else
+                                        cntL++;
+                                }
+                            }
+                            if (cntR * cntL == 0 && objects[i].xx != objects[j].xx)
+                            {
+                                e.Graphics.DrawLine(pen, objects[i].xx, objects[i].yy, objects[j].xx, objects[j].yy);
+                                objects[i].drawline = true;
+                                objects[j].drawline = true;
+                            }
+                        }
+                    }
+                }
+                //    if (objects.Count > 2)
+                //{
+                //    for (int i = 0; i < objects.Count; i++)
+                //    {
+                //        objects[i].drawline = false;
+                //        for (int j = 0; j < objects.Count; j++)
+                //        {
+                //            float k = ((float)objects[j].yy - objects[i].yy) / ((float)objects[j].xx - objects[i].xx);
+                //            float b = objects[i].yy - k * objects[i].xx;
+                //            if (k != 0)
+                //            {
+                //                for (int n = 0; n < objects.Count; n++)
+                //                {
+                //                    if (n != j && n != i)
+                //                    {
+                //                        if (objects[n].yy < objects[n].xx * k + b)
+                //                        {
+                //                            pravo += 1;
+                //                        }
+                //                        else
+                //                        {
+                //                            levo += 1;
+                //                        }
+                //                    }
+                //                }
+                //                if (pravo * levo == 0 && objects[i].xx != objects[j].xx)
+                //                {
+                //                    e.Graphics.DrawLine(pen, objects[i].xx, objects[i].yy, objects[j].xx, objects[j].yy);
+                //                    objects[i].drawline = true;
+                //                    objects[j].drawline = true;
+                //                }
+                //            }
+
+                //        }
+                //    }
+                //}
             }
             catch { Console.WriteLine("Ошибка в paint"); }
             //Graphics G = CreateGraphics();
@@ -52,6 +123,8 @@ namespace paint
         private void Form1_MouseDown(object sender, MouseEventArgs e)
         {
             bool fl = false;
+            int levo = 0;
+            int pravo = 0;
             try
             {
                 foreach (Shape objec in objects)
@@ -89,6 +162,7 @@ namespace paint
                         objects.Add(c);
                     }
                 }
+                
                 
                 Console.WriteLine(objects);
                 Refresh();
