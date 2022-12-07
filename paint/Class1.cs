@@ -24,7 +24,7 @@ namespace paint
         static Color color;
         static Shape()
         {
-            Radius = 50;
+            Radius = 25;
             color = Color.Blue;
         }
         public Shape(int x, int y)
@@ -110,7 +110,8 @@ namespace paint
         }
         public override void Draw(Graphics graphics, Brush brush)
         {
-            graphics.FillRectangle(brush, x - (GRadius / (float)(Math.Sin(45)) / 2), y - (GRadius / (float)(Math.Sin(45)) / 2), GRadius / (float)(Math.Sin(45)), GRadius / (float)(Math.Sin(45)));
+            graphics.FillRectangle(brush, x - GRadius, y - GRadius, 2 * GRadius, 2 * GRadius);
+            //graphics.FillRectangle(brush, x - (GRadius / (float)(Math.Sin(45)) / 2), y - (GRadius / (float)(Math.Sin(45)) / 2), 2 * GRadius, 2 * GRadius));
         }
         public override bool isInside(int mx, int my)
         {
