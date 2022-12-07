@@ -127,45 +127,61 @@ namespace paint
             int pravo = 0;
             try
             {
-                foreach (Shape objec in objects)
+                if (e.Button == MouseButtons.Right)
                 {
-                    if (objec.isInside(e.X, e.Y))
+                    for (int i = 0; i < objects.Count; i++)
                     {
-                        fl = true;
-                        objec.d = true;
-                        objec.dx = objec.xx - e.X;
-                        objec.dy = objec.yy - e.Y;
-                        break;
+                        if (objects[i].isInside(e.X, e.Y))
+                        {
+                            objects.RemoveAt(i);
+                            Refresh();
+                            break;
+                        }
                     }
                 }
-                if (fl == false)
+                else
                 {
-                    if (triangleToolStripMenuItem.Checked)
+                    foreach (Shape objec in objects)
                     {
-                        Triangle c = new Triangle(100, 100);
-                        c.xx = e.X;
-                        c.yy = e.Y;
-                        objects.Add(c);
+                        if (objec.isInside(e.X, e.Y))
+                        {
+                            fl = true;
+                            objec.d = true;
+                            objec.dx = objec.xx - e.X;
+                            objec.dy = objec.yy - e.Y;
+                            break;
+                        }
                     }
-                    if (squareToolStripMenuItem.Checked)
+                    if (fl == false)
                     {
-                        Square c = new Square(100, 100);
-                        c.xx = e.X;
-                        c.yy = e.Y;
-                        objects.Add(c);
+                        if (triangleToolStripMenuItem.Checked)
+                        {
+                            Triangle c = new Triangle(100, 100);
+                            c.xx = e.X;
+                            c.yy = e.Y;
+                            objects.Add(c);
+                        }
+                        if (squareToolStripMenuItem.Checked)
+                        {
+                            Square c = new Square(100, 100);
+                            c.xx = e.X;
+                            c.yy = e.Y;
+                            objects.Add(c);
+                        }
+                        if (circleToolStripMenuItem.Checked)
+                        {
+                            Ellipse c = new Ellipse(100, 100);
+                            c.xx = e.X;
+                            c.yy = e.Y;
+                            objects.Add(c);
+                        }
                     }
-                    if (circleToolStripMenuItem.Checked)
-                    {
-                        Ellipse c = new Ellipse(100, 100);
-                        c.xx = e.X;
-                        c.yy = e.Y;
-                        objects.Add(c);
-                    }
+
+
+                    Console.WriteLine(objects);
+                    Refresh();
                 }
                 
-                
-                Console.WriteLine(objects);
-                Refresh();
             }
             catch { Console.WriteLine("Menustrip не выбран"); }
             
