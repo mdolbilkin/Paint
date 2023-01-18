@@ -34,7 +34,16 @@ namespace paint
         {
            
         }
-
+        public static double cosinus(int x1, int y1, int x2, int y2, int x3, int y3)
+        {
+            double Xba = x1 - x2;    //угол - abc, firstpoint - точка относительно которой смотрим сейчас
+            double Yba = y1 - y2;
+            double Xbc = x3 - x2;
+            double Ybc = y3 - y2;
+            double Lenba = Math.Sqrt(Xba * Xba + Yba * Yba);
+            double Lenbc = Math.Sqrt(Xbc * Xbc + Ybc * Ybc);
+            return (double)(Xba * Xbc + Yba * Ybc) / (Lenba * Lenbc);
+        }
         private void Form1_Paint(object sender, PaintEventArgs e)
         {
             int levo = 0;
@@ -47,37 +56,103 @@ namespace paint
                 {
                     objec1.Draw(e.Graphics, br);
                 }
-                if (objects.Count >= 3)
+                if (opredToolStripMenuItem.Checked)
                 {
-                    int cntL, cntR;
-                    for (int i = 0; i < objects.Count; i++)
-                        objects[i].drawline = false;
-                    for (int i = 0; i < objects.Count; i++)
+                    
+                    if (objects.Count >= 3)
                     {
-                        for (int j = i + 1; j < objects.Count; j++)
+                        int cntL, cntR;
+                        for (int i = 0; i < objects.Count; i++)
+                            objects[i].drawline = false;
+                        for (int i = 0; i < objects.Count; i++)
                         {
-                            cntL = cntR = 0;
-                            float k = ((float)objects[j].yy - objects[i].yy) / ((float)objects[j].xx - objects[i].xx);
-                            float b = objects[i].yy - k * objects[i].xx;
-                            for (int l = 0; l < objects.Count; l++)
+                            for (int j = i + 1; j < objects.Count; j++)
                             {
-                                if (l != i && l != j)
+                                cntL = cntR = 0;
+                                float k = ((float)objects[j].yy - objects[i].yy) / ((float)objects[j].xx - objects[i].xx);
+                                float b = objects[i].yy - k * objects[i].xx;
+                                for (int l = 0; l < objects.Count; l++)
                                 {
-                                    if (objects[l].yy > k * objects[l].xx + b)
-                                        cntR++;
-                                    else
-                                        cntL++;
+                                    if (l != i && l != j)
+                                    {
+                                        if (objects[l].yy > k * objects[l].xx + b)
+                                            cntR++;
+                                        else
+                                            cntL++;
+                                    }
                                 }
-                            }
-                            if (cntR * cntL == 0 && objects[i].xx != objects[j].xx)
-                            {
-                                e.Graphics.DrawLine(pen, objects[i].xx, objects[i].yy, objects[j].xx, objects[j].yy);
-                                objects[i].drawline = true;
-                                objects[j].drawline = true;
+                                if (cntR * cntL == 0 && objects[i].xx != objects[j].xx)
+                                {
+                                    e.Graphics.DrawLine(pen, objects[i].xx, objects[i].yy, objects[j].xx, objects[j].yy);
+                                    objects[i].drawline = true;
+                                    objects[j].drawline = true;
+                                }
                             }
                         }
                     }
                 }
+                else if (jarvisToolStripMenuItem.Checked)
+                {
+                    if (objects.Count >= 3)
+                    {
+                        Shape ppoint;
+                        Shape fpoint = objects[0];
+                        Shape spoint = objects[0];
+                        int maxy = 0;
+                        for (int i = 0; i < objects.Count; i++)
+                        {
+                            if (objects[i].yy > maxy)
+                            {
+                                maxy = objects[i].yy;
+                                fpoint = objects[i];
+                            }
+                            if (objects[i].yy == maxy && objects[i].xx < fpoint.xx)
+                            {
+                                fpoint = objects[i];
+                            }
+                        }
+                        ppoint = new Ellipse(fpoint.xx - 100, fpoint.yy);
+                        double mincos = 1;
+                        for (int i = 0; i < objects.Count; i++)
+                        {
+                            if (objects[i].xx != fpoint.xx && objects[i].yy != fpoint.yy)
+                            {
+                                if (cosinus(ppoint.xx, ppoint.yy, fpoint.xx, fpoint.yy, objects[i].xx, objects[i].yy) < mincos)
+                                {
+                                    mincos = cosinus(ppoint.xx, ppoint.yy, fpoint.xx, fpoint.yy, objects[i].xx, objects[i].yy);
+                                    spoint = objects[i];
+                                }
+                            }
+                        }
+                        e.Graphics.DrawLine(new Pen(Color.Black), fpoint.xx, fpoint.yy, spoint.xx, spoint.yy);
+
+                        Shape startp = fpoint;
+                        while (spoint.xx != startp.xx && spoint.yy != startp.yy)
+                        {
+                            fpoint.drawline = true;
+                            spoint.drawline = true;
+                            ppoint = fpoint;
+                            fpoint = spoint;
+
+                            mincos = 1;
+                            for (int i = 0; i < objects.Count; i++)
+                            {
+                                if (objects[i].xx != fpoint.xx && objects[i].yy != fpoint.yy)
+                                {
+                                    if (cosinus(ppoint.xx, ppoint.yy, fpoint.xx, fpoint.yy, objects[i].xx, objects[i].yy) < mincos)
+                                    {
+                                        mincos = cosinus(ppoint.xx, ppoint.yy, fpoint.xx, fpoint.yy, objects[i].xx, objects[i].yy);
+                                        spoint = objects[i];
+                                    }
+                                }
+                            }
+                            e.Graphics.DrawLine(new Pen(Color.Black), fpoint.xx, fpoint.yy, spoint.xx, spoint.yy);
+                        }
+                    }
+
+                }
+
+
                 //    if (objects.Count > 2)
                 //{
                 //    for (int i = 0; i < objects.Count; i++)
@@ -149,7 +224,7 @@ namespace paint
                             objec.d = true;
                             objec.dx = objec.xx - e.X;
                             objec.dy = objec.yy - e.Y;
-                            break;
+                            
                         }
                     }
                     if (fl == false)
@@ -236,6 +311,31 @@ namespace paint
             foreach (Shape objec in objects)
             {
                 objec.d = false;
+            }
+        }
+
+        private void algorythmToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void opredToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(opredToolStripMenuItem.Checked == false)
+            {
+                opredToolStripMenuItem.Checked = true;
+                jarvisToolStripMenuItem.Checked = false;
+            }
+            
+            
+        }
+
+        private void jarvisToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(jarvisToolStripMenuItem.Checked == false)
+            {
+                jarvisToolStripMenuItem.Checked = true;
+                opredToolStripMenuItem.Checked = false;
             }
         }
     }
