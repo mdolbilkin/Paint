@@ -57,14 +57,15 @@ namespace paint
                 {
                     objec1.Draw(e.Graphics, br);
                 }
+                for (int i = 0; i < objects.Count; i++)
+                    objects[i].drawline = false;
                 if (opredToolStripMenuItem.Checked)
                 {
                     
                     if (objects.Count >= 3)
                     {
                         int cntL, cntR;
-                        for (int i = 0; i < objects.Count; i++)
-                            objects[i].drawline = false;
+                        
                         for (int i = 0; i < objects.Count; i++)
                         {
                             for (int j = i + 1; j < objects.Count; j++)
@@ -158,9 +159,10 @@ namespace paint
                 {
                     moveobolochka = true;
                 }
+                Console.WriteLine($"asd: {moveobolochka}");
 
 
-                
+
             }
             catch { Console.WriteLine("Ошибка в paint"); }
             //Graphics G = CreateGraphics();
@@ -169,7 +171,7 @@ namespace paint
 
         private void Form1_MouseDown(object sender, MouseEventArgs e)
         {
-            Console.WriteLine(moveobolochka);
+            //Console.WriteLine(moveobolochka);
             bool fl = false;
             int levo = 0;
             int pravo = 0;
@@ -202,20 +204,14 @@ namespace paint
                     }
                     if (fl == false)
                     {
-                        if (moveobolochka)
-                        {
-                            for (int i = 0; i < objects.Count; i++)
-                            {
-                                objects[i].d = true;
-                                objects[i].dx = objects[i].xx - e.X;
-                                objects[i].dy = objects[i].yy - e.Y;
-                            }
-                        }
+                        //Console.WriteLine(moveobolochka);
+                        
                         if (triangleToolStripMenuItem.Checked)
                         {
                             Triangle c = new Triangle(100, 100);
                             c.xx = e.X;
                             c.yy = e.Y;
+                            c.d = true;
                             objects.Add(c);
                         }
                         if (squareToolStripMenuItem.Checked)
@@ -223,6 +219,7 @@ namespace paint
                             Square c = new Square(100, 100);
                             c.xx = e.X;
                             c.yy = e.Y;
+                            c.d = true;
                             objects.Add(c);
                         }
                         if (circleToolStripMenuItem.Checked)
@@ -230,15 +227,41 @@ namespace paint
                             Ellipse c = new Ellipse(100, 100);
                             c.xx = e.X;
                             c.yy = e.Y;
+                            c.d = true;
                             objects.Add(c);
+
+                        }
+                        Refresh();
+                        if (moveobolochka)
+                        {
+                            foreach (Shape objec in objects)
+                            {
+                                objec.d = true;
+                                objec.dx = objec.xx - e.X;
+                                objec.dy = objec.yy - e.Y;
+                                Console.WriteLine($"ssd:  {objec.d}");
+                            }
+                        }
+                        if (objects.Count >= 3)
+                        {
+                            for (int i = objects.Count - 1; i >=0; i--)
+                            {
+                                if (objects[i].d = false)
+                                {
+                                    objects.RemoveAt(i);
+                                    i -= 1;
+                                }
+                            }
+                            Console.WriteLine(1);
+                            Refresh();
                         }
 
                         
                     }
 
 
-                    Console.WriteLine(objects);
-                    Refresh();
+                    //Console.WriteLine(objects);
+                    
                 }
                 
             }
@@ -275,19 +298,26 @@ namespace paint
                 squareToolStripMenuItem.Checked = true;
             }
         }
-
+        bool smthm = false;
         private void Form1_MouseMove(object sender, MouseEventArgs e)
         {
+            smthm = false;
             foreach (Shape objec in objects)
             {
                 if (objec.d)
                 {
                     objec.xx = e.X + objec.dx;
                     objec.yy = e.Y + objec.dy;
-                    Refresh();
+                    smthm = true;
+                    
                 }
             }
-            
+            if (smthm)
+            {
+
+                Refresh();
+            }
+
         }
 
         private void Form1_MouseUp(object sender, MouseEventArgs e)
@@ -296,6 +326,17 @@ namespace paint
             foreach (Shape objec in objects)
             {
                 objec.d = false;
+            }
+            if (objects.Count >= 3)
+            {
+                for (int i = 0; i < objects.Count; i++)
+                {
+                    if (objects[i].drawline == false)
+                    {
+                        objects.RemoveAt(i);
+                        i -= 1;
+                    }
+                }
             }
         }
 
