@@ -17,6 +17,7 @@ namespace paint
         //Shape[] objects = new Shape[5];
         List<Shape> objects = new List<Shape>();
         List<Point> points = new List<Point>();
+        bool moveobolochka;
         //Square c = new Square(100, 100);
         //Triangle c = new Triangle(100, 100);
         public Form1()
@@ -150,45 +151,16 @@ namespace paint
                         }
                     }
 
+
+                }
+                Console.WriteLine(objects[objects.Count - 1].drawline);
+                if (objects[objects.Count - 1].drawline == false)
+                {
+                    moveobolochka = true;
                 }
 
 
-                //    if (objects.Count > 2)
-                //{
-                //    for (int i = 0; i < objects.Count; i++)
-                //    {
-                //        objects[i].drawline = false;
-                //        for (int j = 0; j < objects.Count; j++)
-                //        {
-                //            float k = ((float)objects[j].yy - objects[i].yy) / ((float)objects[j].xx - objects[i].xx);
-                //            float b = objects[i].yy - k * objects[i].xx;
-                //            if (k != 0)
-                //            {
-                //                for (int n = 0; n < objects.Count; n++)
-                //                {
-                //                    if (n != j && n != i)
-                //                    {
-                //                        if (objects[n].yy < objects[n].xx * k + b)
-                //                        {
-                //                            pravo += 1;
-                //                        }
-                //                        else
-                //                        {
-                //                            levo += 1;
-                //                        }
-                //                    }
-                //                }
-                //                if (pravo * levo == 0 && objects[i].xx != objects[j].xx)
-                //                {
-                //                    e.Graphics.DrawLine(pen, objects[i].xx, objects[i].yy, objects[j].xx, objects[j].yy);
-                //                    objects[i].drawline = true;
-                //                    objects[j].drawline = true;
-                //                }
-                //            }
-
-                //        }
-                //    }
-                //}
+                
             }
             catch { Console.WriteLine("Ошибка в paint"); }
             //Graphics G = CreateGraphics();
@@ -197,6 +169,7 @@ namespace paint
 
         private void Form1_MouseDown(object sender, MouseEventArgs e)
         {
+            Console.WriteLine(moveobolochka);
             bool fl = false;
             int levo = 0;
             int pravo = 0;
@@ -229,6 +202,15 @@ namespace paint
                     }
                     if (fl == false)
                     {
+                        if (moveobolochka)
+                        {
+                            for (int i = 0; i < objects.Count; i++)
+                            {
+                                objects[i].d = true;
+                                objects[i].dx = objects[i].xx - e.X;
+                                objects[i].dy = objects[i].yy - e.Y;
+                            }
+                        }
                         if (triangleToolStripMenuItem.Checked)
                         {
                             Triangle c = new Triangle(100, 100);
@@ -250,6 +232,8 @@ namespace paint
                             c.yy = e.Y;
                             objects.Add(c);
                         }
+
+                        
                     }
 
 
@@ -308,6 +292,7 @@ namespace paint
 
         private void Form1_MouseUp(object sender, MouseEventArgs e)
         {
+            moveobolochka = false;
             foreach (Shape objec in objects)
             {
                 objec.d = false;
