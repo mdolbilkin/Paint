@@ -18,6 +18,7 @@ namespace paint
         List<Shape> objects = new List<Shape>();
         List<Point> points = new List<Point>();
         bool moveobolochka;
+        Color color;
         //Square c = new Square(100, 100);
         //Triangle c = new Triangle(100, 100);
         public Form1()
@@ -51,8 +52,8 @@ namespace paint
             int pravo = 0;
             try
             {
-                Brush br = new SolidBrush(Color.Blue);
-                Pen pen = new Pen(Color.Black);
+                Brush br = new SolidBrush(color);
+                Pen pen = new Pen(color);
                 foreach (Shape objec1 in objects)
                 {
                     objec1.Draw(e.Graphics, br);
@@ -309,14 +310,16 @@ namespace paint
                     objec.xx = e.X + objec.dx;
                     objec.yy = e.Y + objec.dy;
                     smthm = true;
+                    Console.WriteLine("MOve");
                     
                 }
             }
-            if (smthm)
-            {
+            //if (smthm)
+            //{
 
-                Refresh();
-            }
+            //    Refresh();
+            //}
+            Refresh();
 
         }
 
@@ -363,6 +366,12 @@ namespace paint
                 jarvisToolStripMenuItem.Checked = true;
                 opredToolStripMenuItem.Checked = false;
             }
+        }
+
+        private void button_Color_Click(object sender, EventArgs e)
+        {
+            colorDialog1.ShowDialog();
+            color = colorDialog1.Color;
         }
     }
 }
