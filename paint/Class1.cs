@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace paint
 {
-    class RadiusEventArgs 
+    class RadiusEventArgs
     {
         public int radius { get; set; }
         public RadiusEventArgs(int radius)

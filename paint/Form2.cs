@@ -33,7 +33,6 @@ namespace paint
         private void trackBar1_Scroll(object sender, EventArgs e)
         {
             radiusEventArgs.RadiusChanged(this, new RadiusEventArgs(trackBar1.Value));
-            radiusEventArgs.RadiusChanged += new RadiusEventArgs(trackBar1.Value) 
         }
     }
 }

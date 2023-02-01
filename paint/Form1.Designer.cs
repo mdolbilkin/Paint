@@ -2,7 +2,7 @@
 namespace paint
 {
     partial class Form1
-    {
+    { 
         /// <summary>
         /// Обязательная переменная конструктора.
         /// </summary>

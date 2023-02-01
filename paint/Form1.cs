@@ -14,6 +14,7 @@ namespace paint
     public partial class Form1 : Form
     { 
         Shape c;
+        
         //Ellipse c = new Ellipse(100, 100);
         //Shape[] objects = new Shape[5];
         List<Shape> objects = new List<Shape>();
