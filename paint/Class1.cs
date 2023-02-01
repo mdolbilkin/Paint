@@ -12,22 +12,6 @@ using System.Windows.Forms;
 
 namespace paint
 {
-    class RadiusEventArgs
-    {
-        public int radius { get; set; }
-        public RadiusEventArgs(int radius)
-        {
-            this.radius = radius;
-        }
-        public delegate void RadiusEventHandler(object sender, RadiusEventArgs e);
-        public event RadiusEventHandler RadiusChanged
-        {
-            add
-            {
-                Console.WriteLine("add");
-            }
-            remove { Console.WriteLine("remove"); }
-    }
     abstract class Shape
     {
         protected int x;

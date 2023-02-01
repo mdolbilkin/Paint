@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 namespace paint
 {
@@ -18,10 +17,8 @@ namespace paint
         //Shape[] objects = new Shape[5];
         List<Shape> objects = new List<Shape>();
         List<Point> points = new List<Point>();
-        List<Stopwatch> watches = new List<Stopwatch>();
         bool moveobolochka;
         Color color;
-        Stopwatch stopwatch = new Stopwatch();
         //Square c = new Square(100, 100);
         //Triangle c = new Triangle(100, 100);
         public Form1()
@@ -156,10 +153,8 @@ namespace paint
                         }
                     }
 
-                   
-                    Console.WriteLine(stopwatch.Elapsed.ToString());
+
                 }
-                
                 Console.WriteLine(objects[objects.Count - 1].drawline);
                 if (objects[objects.Count - 1].drawline == false)
                 {
@@ -377,23 +372,6 @@ namespace paint
         {
             colorDialog1.ShowDialog();
             color = colorDialog1.Color;
-        }
-
-        private void testToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            RadiusEventArgs radiusEventArgs = new RadiusEventArgs(12);
-            Form2 fm2 = new Form2();
-            fm2.rad
-            fm2.ShowDialog();
-            
-        }
-        private void UpdateRadius(object sender, RadiusEventArgs e)
-        {
-            foreach (Shape objec1 in objects)
-            {
-                objec1.GRadius = e.radius;
-                Refresh();
-            }
         }
     }
 }

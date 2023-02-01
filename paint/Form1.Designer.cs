@@ -39,7 +39,6 @@ namespace paint
             this.jarvisToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.button_Color = new System.Windows.Forms.Button();
-            this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -47,8 +46,7 @@ namespace paint
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.figuresToolStripMenuItem,
-            this.algorythmToolStripMenuItem,
-            this.testToolStripMenuItem});
+            this.algorythmToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(800, 24);
@@ -112,20 +110,13 @@ namespace paint
             // 
             // button_Color
             // 
-            this.button_Color.Location = new System.Drawing.Point(255, 0);
+            this.button_Color.Location = new System.Drawing.Point(142, 1);
             this.button_Color.Name = "button_Color";
             this.button_Color.Size = new System.Drawing.Size(75, 23);
             this.button_Color.TabIndex = 2;
             this.button_Color.Text = "Color";
             this.button_Color.UseVisualStyleBackColor = true;
             this.button_Color.Click += new System.EventHandler(this.button_Color_Click);
-            // 
-            // testToolStripMenuItem
-            // 
-            this.testToolStripMenuItem.Name = "testToolStripMenuItem";
-            this.testToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
-            this.testToolStripMenuItem.Text = "Test";
-            this.testToolStripMenuItem.Click += new System.EventHandler(this.testToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -160,7 +151,6 @@ namespace paint
         private System.Windows.Forms.ToolStripMenuItem jarvisToolStripMenuItem;
         private System.Windows.Forms.ColorDialog colorDialog1;
         private System.Windows.Forms.Button button_Color;
-        private System.Windows.Forms.ToolStripMenuItem testToolStripMenuItem;
     }
 }
 
