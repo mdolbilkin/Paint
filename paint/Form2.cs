@@ -11,10 +11,17 @@ using System.Diagnostics;
 
 namespace paint
 {
+    
     public partial class Form2 : Form
     {
-        RadiusEventArgs radiusEventArgs = new RadiusEventArgs(12);
-        //public event RadiusEventArgs
+        int radius;
+        public event RadiusEventHandler RadiusChanged;
+        public Form2(int rad)
+        {
+            radius = rad;
+            InitializeComponent();
+
+        }
         public Form2()
         {
             InitializeComponent();
@@ -22,7 +29,7 @@ namespace paint
 
         private void Form2_Load(object sender, EventArgs e)
         {
-            
+            trackBar1.Value = radius;
         }
 
         private void label1_Click(object sender, EventArgs e)
@@ -32,7 +39,10 @@ namespace paint
 
         private void trackBar1_Scroll(object sender, EventArgs e)
         {
-            radiusEventArgs.RadiusChanged(this, new RadiusEventArgs(trackBar1.Value));
+            if (RadiusChanged != null)
+            {
+                RadiusChanged(this, new RadiusEventArgs(trackBar1.Value));
+            }
         }
     }
 }

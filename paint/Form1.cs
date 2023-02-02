@@ -4,13 +4,14 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 namespace paint
 {
+    
     public partial class Form1 : Form
     { 
         Shape c;
@@ -19,10 +20,8 @@ namespace paint
         //Shape[] objects = new Shape[5];
         List<Shape> objects = new List<Shape>();
         List<Point> points = new List<Point>();
-        List<Stopwatch> watches = new List<Stopwatch>();
         bool moveobolochka;
-        Color color;
-        Stopwatch stopwatch = new Stopwatch();
+        Color color = Color.Red;
         //Square c = new Square(100, 100);
         //Triangle c = new Triangle(100, 100);
         public Form1()
@@ -158,13 +157,18 @@ namespace paint
                     }
 
                    
-                    Console.WriteLine(stopwatch.Elapsed.ToString());
                 }
                 
                 Console.WriteLine(objects[objects.Count - 1].drawline);
-                if (objects[objects.Count - 1].drawline == false)
+                if (objects[objects.Count - 1].drawline == false && objects.Count > 2)
                 {
-                    moveobolochka = true;
+                    foreach (Shape objec in objects)
+                    {
+                        objec.d = true;
+                        objec.dx = objec.xx - objects[objects.Count - 1].xx;
+                        objec.dy = objec.yy - objects[objects.Count - 1].yy;
+                        Console.WriteLine($"ssd:  {objec.d}");
+                    }
                 }
                 Console.WriteLine($"asd: {moveobolochka}");
 
@@ -239,16 +243,7 @@ namespace paint
 
                         }
                         Refresh();
-                        if (moveobolochka)
-                        {
-                            foreach (Shape objec in objects)
-                            {
-                                objec.d = true;
-                                objec.dx = objec.xx - e.X;
-                                objec.dy = objec.yy - e.Y;
-                                Console.WriteLine($"ssd:  {objec.d}");
-                            }
-                        }
+                        
                         if (objects.Count >= 3)
                         {
                             for (int i = objects.Count - 1; i >=0; i--)
@@ -305,27 +300,25 @@ namespace paint
                 squareToolStripMenuItem.Checked = true;
             }
         }
-        bool smthm = false;
+
         private void Form1_MouseMove(object sender, MouseEventArgs e)
         {
-            smthm = false;
-            foreach (Shape objec in objects)
+            if (objects.Count != 0)
             {
-                if (objec.d)
+                foreach (Shape objec in objects)
                 {
-                    objec.xx = e.X + objec.dx;
-                    objec.yy = e.Y + objec.dy;
-                    smthm = true;
-                    Console.WriteLine("MOve");
-                    
-                }
-            }
-            //if (smthm)
-            //{
+                    if (objec.d)
+                    {
+                        objec.xx = e.X + objec.dx;
+                        objec.yy = e.Y + objec.dy;
+                        Console.WriteLine("MOve");
 
-            //    Refresh();
-            //}
-            Refresh();
+                    }
+                }
+
+                Refresh();
+            }
+            
 
         }
 
@@ -376,25 +369,49 @@ namespace paint
 
         private void button_Color_Click(object sender, EventArgs e)
         {
-            colorDialog1.ShowDialog();
-            color = colorDialog1.Color;
-        }
-
-        private void testToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            RadiusEventArgs radiusEventArgs = new RadiusEventArgs(12);
-            Form2 fm2 = new Form2();
-            fm2.rad
-            fm2.ShowDialog();
             
         }
+
+        //private void testToolStripMenuItem_Click(object sender, RadiusEventArgs e)
+        //{
+            
+        //    Form2 fm2 = new Form2();
+        //    fm2.RadiusChanged += new RadiusEventHandler(UpdateRadius);
+        //    fm2.ShowDialog();
+
+        //}
         private void UpdateRadius(object sender, RadiusEventArgs e)
         {
             foreach (Shape objec1 in objects)
             {
                 objec1.GRadius = e.radius;
-                Refresh();
+                
             }
+            Refresh();
+        }
+
+        private void colorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            colorDialog1.ShowDialog();
+            color = colorDialog1.Color;
+        }
+
+        private void radiusToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form2 fm2 = new Form2(objects[0].GRadius);
+            fm2.RadiusChanged += new RadiusEventHandler(UpdateRadius);
+            fm2.ShowDialog();
         }
     }
+    public class RadiusEventArgs : EventArgs
+    {
+        public int radius { get; set; }
+        public RadiusEventArgs(int radius)
+        {
+            this.radius = radius;
+        }
+
+
+    }
+    public delegate void RadiusEventHandler(object sender, RadiusEventArgs e);
 }
