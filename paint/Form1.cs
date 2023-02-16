@@ -22,6 +22,7 @@ namespace paint
         List<Point> points = new List<Point>();
         bool moveobolochka;
         Color color = Color.Red;
+        Form2 fm2;
         //Square c = new Square(100, 100);
         //Triangle c = new Triangle(100, 100);
         public Form1()
@@ -398,9 +399,27 @@ namespace paint
 
         private void radiusToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form2 fm2 = new Form2(objects[0].GRadius);
-            fm2.RadiusChanged += new RadiusEventHandler(UpdateRadius);
-            fm2.ShowDialog();
+            if (fm2 == null)
+            {
+                fm2 = new Form2(objects[0].GRadius);
+                fm2.RadiusChanged += new RadiusEventHandler(UpdateRadius);
+                fm2.Show();
+            }
+            else
+            {
+                fm2.Activate();
+                if (fm2.IsDisposed)
+                {
+                    fm2 = new Form2(objects[0].GRadius);
+                    fm2.RadiusChanged += new RadiusEventHandler(UpdateRadius);
+                    fm2.Show();
+                }
+                if (fm2.WindowState == System.Windows.Forms.FormWindowState.Minimized)
+                {
+                    fm2.WindowState = System.Windows.Forms.FormWindowState.Normal;
+                }
+            }
+            
         }
     }
     public class RadiusEventArgs : EventArgs
