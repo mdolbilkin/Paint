@@ -399,6 +399,7 @@ namespace paint
         {
             colorDialog1.ShowDialog();
             color = colorDialog1.Color;
+
         }
 
         private void radiusToolStripMenuItem_Click(object sender, EventArgs e)
