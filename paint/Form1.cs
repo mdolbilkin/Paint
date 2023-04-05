@@ -8,8 +8,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 
 namespace paint
 {
@@ -17,7 +15,7 @@ namespace paint
     public partial class Form1 : Form
     { 
         Shape c;
-        BinaryFormatter formatter;
+        
         //Ellipse c = new Ellipse(100, 100);
         //Shape[] objects = new Shape[5];
         List<Shape> objects = new List<Shape>();
@@ -31,13 +29,11 @@ namespace paint
         {
             InitializeComponent();
             DoubleBuffered = true;
-            formatter = new BinaryFormatter();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            saveFileDialog1.Filter = "binary files(*.bin)|*.bin";
-            openFileDialog1.Filter = "binary files(*.bin)|*.bin";
+        
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -424,24 +420,6 @@ namespace paint
                 }
             }
             
-        }
-
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            openFileDialog1.ShowDialog();
-            using (Stream stream = new FileStream(openFileDialog1.FileName, FileMode.Open))
-            {
-                objects = (List<Shape>)formatter.Deserialize(stream);
-            }
-        }
-
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            saveFileDialog1.ShowDialog();
-            using (Stream stream = new FileStream(saveFileDialog1.FileName, FileMode.Create))
-            {
-                formatter.Serialize(stream, objects);
-            }
         }
     }
     public class RadiusEventArgs : EventArgs
