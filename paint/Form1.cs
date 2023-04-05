@@ -417,6 +417,7 @@ namespace paint
                 if (fm2.WindowState == System.Windows.Forms.FormWindowState.Minimized)
                 {
                     fm2.WindowState = System.Windows.Forms.FormWindowState.Normal;
+
                 }
             }
             
