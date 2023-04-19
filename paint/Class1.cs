@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace paint
 {
-    
+    [Serializable]
         public abstract class Shape
         {
             protected int x;
@@ -21,8 +21,8 @@ namespace paint
             public bool drawline { get; set; }
             public int dx { get; set; }
             public int dy { get; set; }
-            static int Radius;
-            static Color color;
+            public static int Radius;
+            public static Color color;
             static Shape()
             {
                 Radius = 25;
@@ -88,6 +88,7 @@ namespace paint
                 }
             }
         }
+    [Serializable]
         class Ellipse : Shape
         {
             public Ellipse(int x, int y) : base(x, y)
@@ -103,6 +104,7 @@ namespace paint
                 return Math.Abs(mx - x) <= GRadius && Math.Abs(my - y) <= GRadius;
             }
         }
+    [Serializable]
         class Square : Shape
         {
             public Square(int x, int y) : base(x, y)
@@ -119,6 +121,7 @@ namespace paint
                 return x + (GRadius / (float)(Math.Sin(45)) / 2) >= mx && mx >= x - (GRadius / (float)(Math.Sin(45)) / 2) && my <= y + (GRadius / (float)(Math.Sin(45)) / 2) && my >= y - (GRadius / (float)(Math.Sin(45)) / 2);
             }
         }
+    [Serializable]
         class Triangle : Shape
         {
             public Triangle(int x, int y) : base(x, y)

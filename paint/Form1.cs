@@ -13,7 +13,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace paint
 {
-    
+    [Serializable]
     public partial class Form1 : Form
     { 
         Shape c;
@@ -27,17 +27,154 @@ namespace paint
         Form2 fm2;
         //Square c = new Square(100, 100);
         //Triangle c = new Triangle(100, 100);
+        public List<bool> JarvisOpred = new List<bool> { false, false };
+        private string FileName;
+        private bool isSaved = false;
+
+
+        private void SaveFile()
+        {
+            NameCheck();
+            BinaryFormatter BF = new BinaryFormatter();
+            if (FileName != null)
+            {
+                JarvisOpred[0] = opredToolStripMenuItem.Checked;
+                JarvisOpred[1] = jarvisToolStripMenuItem.Checked;
+                FileStream FS = new FileStream(FileName, FileMode.Create, FileAccess.Write);
+                BF.Serialize(FS, objects);
+                BF.Serialize(FS, Shape.color);
+                BF.Serialize(FS, Shape.Radius);
+                BF.Serialize(FS, JarvisOpred);
+                isSaved = true;
+                FS.Close();
+            }
+        }
+        private void NameCheck()
+        {
+            if (FileName == null)
+            {
+                using (SaveFileDialog dialog = new SaveFileDialog())
+                {
+                    dialog.Filter = "bin files (*.bin)|*.bin|All files (*.*)|*.*";
+                    dialog.FilterIndex = 1;
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                    {
+                        FileName = dialog.FileName;
+                    }
+                }
+            }
+        }
+        private void SaveFileAs()
+        {
+            using (SaveFileDialog dialog = new SaveFileDialog())
+            {
+                dialog.Filter = "bin files (*.bin)|*.bin|All files (*.*)|*.*";
+                dialog.FilterIndex = 1;
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    JarvisOpred[0] = opredToolStripMenuItem.Checked;
+                    JarvisOpred[1] = jarvisToolStripMenuItem.Checked;
+                    FileName = dialog.FileName;
+                    BinaryFormatter BF = new BinaryFormatter();
+                    FileStream FS = new FileStream(FileName, FileMode.Create, FileAccess.Write);
+                    BF.Serialize(FS, objects);
+                    BF.Serialize(FS, Shape.color);
+                    BF.Serialize(FS, Shape.Radius);
+                    BF.Serialize(FS, JarvisOpred);
+                    isSaved = true;
+                    FS.Close();
+                }
+            }
+        }
+        private void LoadFile()
+        {
+            if (!isSaved)
+            {
+                MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+                string message = "Файл не сохранен! Продолжить?";
+                string title = "Предупреждение";
+                DialogResult result = MessageBox.Show(message, title, buttons);
+                if (result == DialogResult.Yes)
+                {
+                    using (OpenFileDialog dialog = new OpenFileDialog())
+                    {
+                        dialog.Filter = "bin files (*.bin)|*.bin|All files (*.*)|*.*";
+                        dialog.FilterIndex = 1;
+                        if (dialog.ShowDialog() == DialogResult.OK)
+                        {
+                            FileName = dialog.FileName;
+                            BinaryFormatter DF = new BinaryFormatter();
+                            FileStream FS = new FileStream(FileName, FileMode.Open, FileAccess.Read);
+                            objects = (List<Shape>)DF.Deserialize(FS);
+                            Console.WriteLine(objects[0]);
+                            Shape.color = (Color)DF.Deserialize(FS);
+                            Shape.Radius = (int)DF.Deserialize(FS);
+                            JarvisOpred = (List<bool>)DF.Deserialize(FS);
+                            opredToolStripMenuItem.Checked = JarvisOpred[0];
+                            jarvisToolStripMenuItem.Checked = JarvisOpred[1];
+                            isSaved = true;
+                            FS.Close();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                using (OpenFileDialog dialog = new OpenFileDialog())
+                {
+                    dialog.Filter = "bin files (*.bin)|*.bin|All files (*.*)|*.*";
+                    dialog.FilterIndex = 1;
+                    dialog.RestoreDirectory = true;
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                    {
+                        FileName = dialog.FileName;
+                        BinaryFormatter BF = new BinaryFormatter();
+                        FileStream FS = new FileStream(FileName, FileMode.Open, FileAccess.Read);
+                        objects = (List<Shape>)BF.Deserialize(FS);
+                        Shape.color = (Color)BF.Deserialize(FS);
+                        Shape.Radius = (int)BF.Deserialize(FS);
+                        isSaved = true;
+                        FS.Close();
+                    }
+                }
+            }
+        }
+        private void NewFile()
+        {
+            if (!isSaved)
+            {
+                MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+                string message = "Файл не сохранен! Продолжить?";
+                string title = "Предупреждение";
+                DialogResult result = MessageBox.Show(message, title, buttons);
+                if (result == DialogResult.Yes)
+                {
+                    objects.Clear();
+                    isSaved = true;
+                    Shape.Radius = 25;
+                    Shape.color = Color.Blue;
+                    FileName = null;
+                    Refresh();
+                }
+            }
+            else
+            {
+                objects.Clear();
+                isSaved = true;
+                Shape.Radius = 25;
+                Shape.color = Color.Blue;
+                FileName = null;
+                Refresh();
+            }
+        }
         public Form1()
         {
             InitializeComponent();
             DoubleBuffered = true;
-            formatter = new BinaryFormatter();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            saveFileDialog1.Filter = "binary files(*.bin)|*.bin";
-            openFileDialog1.Filter = "binary files(*.bin)|*.bin";
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -429,20 +566,22 @@ namespace paint
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            openFileDialog1.ShowDialog();
-            using (Stream stream = new FileStream(openFileDialog1.FileName, FileMode.Open))
-            {
-                objects = (List<Shape>)formatter.Deserialize(stream);
-            }
+            LoadFile();
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            saveFileDialog1.ShowDialog();
-            using (Stream stream = new FileStream(saveFileDialog1.FileName, FileMode.Create))
-            {
-                formatter.Serialize(stream, objects);
-            }
+            SaveFileAs();
+        }
+
+        private void saveToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            SaveFile();
+        }
+
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            NewFile();
         }
     }
     public class RadiusEventArgs : EventArgs
