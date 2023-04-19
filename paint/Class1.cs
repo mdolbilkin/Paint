@@ -12,146 +12,149 @@ using System.Windows.Forms;
 
 namespace paint
 {
-    
-        public abstract class Shape
+    [Serializable]
+    public abstract class Shape
+    {
+        protected int x;
+        protected int y;
+        protected bool draft;
+        public bool drawline { get; set; }
+        public int dx { get; set; }
+        public int dy { get; set; }
+        public static int Radius;
+        public static Color color;
+        static Shape()
         {
-            protected int x;
-            protected int y;
-            protected bool draft;
-            public bool drawline { get; set; }
-            public int dx { get; set; }
-            public int dy { get; set; }
-            static int Radius;
-            static Color color;
-            static Shape()
+            Radius = 25;
+            color = Color.Blue;
+        }
+        public Shape(int x, int y)
+        {
+            draft = false;
+            this.x = x;
+            this.y = y;
+        }
+        public abstract bool isInside(int mx, int my);
+        public abstract void Draw(Graphics graphics, Brush brush);
+        public int GRadius
+        {
+            get
             {
-                Radius = 25;
-                color = Color.Blue;
+                return Radius;
             }
-            public Shape(int x, int y)
+            set
             {
-                draft = false;
-                this.x = x;
-                this.y = y;
+                Radius = value;
             }
-            public abstract bool isInside(int mx, int my);
-            public abstract void Draw(Graphics graphics, Brush brush);
-            public int GRadius
+        }
+        public int xx
+        {
+            get
             {
-                get
-                {
-                    return Radius;
-                }
-                set
-                {
-                    Radius = value;
-                }
+                return x;
             }
-            public int xx
+            set
             {
-                get
-                {
-                    return x;
-                }
-                set
-                {
-                    x = value;
-                }
+                x = value;
             }
-            public int yy
+        }
+        public int yy
+        {
+            get
             {
-                get
-                {
-                    return y;
-                }
-                set
-                {
-                    y = value;
-                }
+                return y;
             }
-            public bool d
+            set
             {
-                get
+                y = value;
+            }
+        }
+        public bool d
+        {
+            get
+            {
+                return draft;
+            }
+            set
+            {
+                try
                 {
-                    return draft;
+                    draft = value;
                 }
-                set
+                catch
                 {
-                    try
-                    {
-                        draft = value;
-                    }
-                    catch
-                    {
-                        Console.WriteLine();
-                    }
+                    Console.WriteLine();
                 }
             }
         }
-        class Ellipse : Shape
+    }
+    [Serializable]
+    class Ellipse : Shape
+    {
+        public Ellipse(int x, int y) : base(x, y)
         {
-            public Ellipse(int x, int y) : base(x, y)
-            {
 
-            }
-            public override void Draw(Graphics G, Brush b)
-            {
-                G.FillEllipse(b, xx - GRadius, yy - GRadius, 2 * GRadius, 2 * GRadius);
-            }
-            public override bool isInside(int mx, int my)
-            {
-                return Math.Abs(mx - x) <= GRadius && Math.Abs(my - y) <= GRadius;
-            }
         }
-        class Square : Shape
+        public override void Draw(Graphics G, Brush b)
         {
-            public Square(int x, int y) : base(x, y)
-            {
-
-            }
-            public override void Draw(Graphics graphics, Brush brush)
-            {
-                graphics.FillRectangle(brush, x - GRadius, y - GRadius, 2 * GRadius, 2 * GRadius);
-                //graphics.FillRectangle(brush, x - (GRadius / (float)(Math.Sin(45)) / 2), y - (GRadius / (float)(Math.Sin(45)) / 2), 2 * GRadius, 2 * GRadius));
-            }
-            public override bool isInside(int mx, int my)
-            {
-                return x + (GRadius / (float)(Math.Sin(45)) / 2) >= mx && mx >= x - (GRadius / (float)(Math.Sin(45)) / 2) && my <= y + (GRadius / (float)(Math.Sin(45)) / 2) && my >= y - (GRadius / (float)(Math.Sin(45)) / 2);
-            }
+            G.FillEllipse(b, xx - GRadius, yy - GRadius, 2 * GRadius, 2 * GRadius);
         }
-        class Triangle : Shape
+        public override bool isInside(int mx, int my)
         {
-            public Triangle(int x, int y) : base(x, y)
-            {
+            return Math.Abs(mx - x) <= GRadius && Math.Abs(my - y) <= GRadius;
+        }
+    }
+    [Serializable]
+    class Square : Shape
+    {
+        public Square(int x, int y) : base(x, y)
+        {
 
-            }
-            public override void Draw(Graphics graphics, Brush brush)
+        }
+        public override void Draw(Graphics graphics, Brush brush)
+        {
+            graphics.FillRectangle(brush, x - GRadius, y - GRadius, 2 * GRadius, 2 * GRadius);
+            //graphics.FillRectangle(brush, x - (GRadius / (float)(Math.Sin(45)) / 2), y - (GRadius / (float)(Math.Sin(45)) / 2), 2 * GRadius, 2 * GRadius));
+        }
+        public override bool isInside(int mx, int my)
+        {
+            return x + (GRadius / (float)(Math.Sin(45)) / 2) >= mx && mx >= x - (GRadius / (float)(Math.Sin(45)) / 2) && my <= y + (GRadius / (float)(Math.Sin(45)) / 2) && my >= y - (GRadius / (float)(Math.Sin(45)) / 2);
+        }
+    }
+    [Serializable]
+    class Triangle : Shape
+    {
+        public Triangle(int x, int y) : base(x, y)
+        {
+
+        }
+        public override void Draw(Graphics graphics, Brush brush)
+        {
+            Point point1 = new Point(x, y - GRadius);
+            Point point2 = new Point(x - GRadius, y + GRadius);
+            Point point3 = new Point(x + GRadius, y + GRadius);
+            Point[] points = { point3, point1, point2 };
+            graphics.FillPolygon(brush, points);
+        }
+        public override bool isInside(int mouse_x, int mouse_y)
+        {
+            double x1, y1, x2, y2, x3, y3;
+            x1 = x - (GRadius / 2 * Math.Sqrt(3));
+            y1 = (y + GRadius / 2.0);
+            x2 = x;
+            y2 = y - GRadius;
+            x3 = x + (GRadius / 2 * Math.Sqrt(3));
+            y3 = y1;
+            if (mouse_y < y + GRadius / 2.0 && mouse_y > (double)(y2 - y1) / (x2 - x1) * mouse_x + (y1 - (double)(y2 - y1) / (x2 - x1) * x1))
             {
-                Point point1 = new Point(x, y - GRadius);
-                Point point2 = new Point(x - GRadius, y + GRadius);
-                Point point3 = new Point(x + GRadius, y + GRadius);
-                Point[] points = { point3, point1, point2 };
-                graphics.FillPolygon(brush, points);
-            }
-            public override bool isInside(int mouse_x, int mouse_y)
-            {
-                double x1, y1, x2, y2, x3, y3;
-                x1 = x - (GRadius / 2 * Math.Sqrt(3));
-                y1 = (y + GRadius / 2.0);
-                x2 = x;
-                y2 = y - GRadius;
-                x3 = x + (GRadius / 2 * Math.Sqrt(3));
-                y3 = y1;
-                if (mouse_y < y + GRadius / 2.0 && mouse_y > (double)(y2 - y1) / (x2 - x1) * mouse_x + (y1 - (double)(y2 - y1) / (x2 - x1) * x1))
+                if (mouse_y > (double)(y3 - y2) / (x3 - x2) * mouse_x + (y2 - (double)(y3 - y2) / (x3 - x2) * x2))
                 {
-                    if (mouse_y > (double)(y3 - y2) / (x3 - x2) * mouse_x + (y2 - (double)(y3 - y2) / (x3 - x2) * x2))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
-                return false;
             }
-
-
+            return false;
         }
+
+
+    }
 }
